@@ -1,0 +1,38 @@
+
+.text-primary {
+  color: #FF385C !important;
+}
+
+
+.btn-primary {
+  background-color: #ff2e66 !important;
+  border-color: #E51D53 !important;
+  color: #fff !important; /* Set text color to white for better contrast */
+}
+
+/* Change button color on hover and focus */
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #e01c44 !important; /* A slightly darker red */
+  border-color: #d11a3f !important;
+}
+
+/* 3. Override the outline button style */
+.btn-outline-primary {
+  color: #E51D53 !important;
+  border-color: #E51D53 !important;
+}
+
+/* Change outline button color on hover and focus */
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+  background-color: #E51D53 !important;
+  border-color: #E51D53 !important;
+  color: #fff !important; /* Set text to white on hover */
+}
+
+/* 4. (Optional but recommended) Override the border color utility */
+.border-primary {
+  border-color: #E51D53 !important;
+}
+
+
+
