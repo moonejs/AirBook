@@ -60,6 +60,7 @@ app.route('/listings/new')
 .get((req,res)=>{
     res.render('listings/new')
 })
+
 .post(wrapAsync(async(req,res)=>{
     if(!req.body.listing){
         throw new ExpressError(404,"Send valid Data")
@@ -95,14 +96,19 @@ app.delete('/listings/:id',wrapAsync(async(req,res)=>{
     await Listing.findByIdAndDelete(id)
 }))
 
+
 app.use((req,res,next)=>{
     next(new ExpressError(404,'Page not found'))
 })
 
 app.use((err,req,res,next)=>{
    const { statusCode = 500, message = 'Something went wrong!' } = err;
-
-   res.status(statusCode).send(message)
+   if (statusCode == 404) {
+      return res.status(404).render('error', { message });
+   }
+   else{
+       res.status(statusCode).send(message)
+   }
 })
 
 app.listen(port,()=>{
