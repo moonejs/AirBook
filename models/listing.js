@@ -26,7 +26,13 @@ const listingSchema=new Schema({
     country:{
         type:String,
         required:[true,'A listing must specify the country.']
-    }
+    },
+    reviews:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:'Review'
+        }
+    ]
 },{
     timestamps:true
 })

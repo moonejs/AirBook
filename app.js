@@ -7,9 +7,11 @@ const methodOverride=require('method-override')
 
 
 const Listing=require('./models/listing')
+const Review=require('./models/review')
 const wrapAsync=require('./utils/wrapAsync')
 const ExpressError=require('./utils/ExpressError')
 const {listingSchema}=require('./schema')
+const {reviewSchema}=require('./schema')
 
 
 
@@ -60,6 +62,16 @@ const validateListing=(req,res,next)=>{
     }
 }
 
+const validateReview=(req,res,next)=>{
+    let{error}=reviewSchema.validate(req.body,{abortEarly:false})
+    if(error){
+        let errMsg=error.details.map((e)=>e.message).join(',')
+        throw new ExpressError(400,errMsg)
+    }else{
+        next()
+    }
+}
+
 app.route('/listings')
 .get(wrapAsync(async(req,res)=>{
     let allListings= await Listing.find()
@@ -94,8 +106,20 @@ app.route('/listings/:id/edit')
 app.route('/listings/:id')
 .get(wrapAsync(async(req,res)=>{
     let {id}=req.params
-    let listing = await Listing.findById(id)
+    let listing = await Listing.findById(id).populate('reviews')
     res.render('listings/show',{listing})
+}))
+
+app.route('/listings/:id/reviews')
+.post(validateReview,wrapAsync(async(req,res)=>{
+    let {id}=req.params
+    const newReview=new Review(req.body.review)
+    const listing=await Listing.findById(id)
+    await listing.reviews.push(newReview)
+    await newReview.save()
+    await listing.save()
+    res.redirect(`/listings/${id}`) 
+
 }))
 
 app.delete('/listings/:id',wrapAsync(async(req,res)=>{

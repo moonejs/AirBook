@@ -1,0 +1,40 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            
+            <div class="mb-4">
+                <a href="/listings" class="text-decoration-none text-muted">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    <span>Back to dashboard</span>
+                </a>
+            </div>
+
+            <div class="bg-white rounded p-4 ">
+                <h3 class="mb-4 fw-normal">Write a review</h3>
+                
+                <form action="/reviews" method="POST">
+                    
+                    <div class="mb-4">
+                        <label for="range" class="form-label">Rating</label>
+                        <input type="range" class="form-range input-slider" min="0" max="5" id="range" name="review[rating]">
+                        
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="comment" class="form-label">Comment</label>
+                        <textarea class="form-control" id="comment" name="review[comment]" rows="5" 
+                                  placeholder="Tell others about your stay..." required></textarea>
+                    </div>
+                
+                    <div class="text-center mt-5">
+                        <button type="submit" class="btn btn-primary px-5 py-3">
+                            Submit Review
+                            <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
