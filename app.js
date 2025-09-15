@@ -5,19 +5,14 @@ const expressLayouts = require('express-ejs-layouts');
 const methodOverride=require('method-override')
 
 
-
-const Listing=require('./models/listing')
-const Review=require('./models/review')
-const wrapAsync=require('./utils/wrapAsync')
-const ExpressError=require('./utils/ExpressError')
-const {listingSchema}=require('./schema')
-const {reviewSchema}=require('./schema')
-
+const listings=require('./routes/listings')
 
 
 const port=8080
 const app=express()
 const MONGO_URL = 'mongodb://127.0.0.1:27017/airbook'
+
+
 
 main()
 .then(()=>{console.log("Db connected successfully!");
@@ -32,8 +27,6 @@ async function main() {
 app.use(expressLayouts);
 app.use(express.urlencoded({extended:true}))
 app.use(express.static(path.join(__dirname,"public")));
-// app.use(express.static(path.join(__dirname, "/public/css")));   
-// app.use(express.static(path.join(__dirname, "/public/js")));  
 app.use(express.json());
 app.use(methodOverride("_method"))
 
@@ -51,81 +44,12 @@ app.get('/',(req,res)=>{
     res.send('hello')
 })
 
-const validateListing=(req,res,next)=>{
-    let {error}=listingSchema.validate(req.body,{ abortEarly: false })
-    if (error){
-        let errMsg=error.details.map((e)=>e.message).join(',')
-        throw new ExpressError(400,errMsg)
-    }
-    else{
-        next()
-    }
-}
-
-const validateReview=(req,res,next)=>{
-    let{error}=reviewSchema.validate(req.body,{abortEarly:false})
-    if(error){
-        let errMsg=error.details.map((e)=>e.message).join(',')
-        throw new ExpressError(400,errMsg)
-    }else{
-        next()
-    }
-}
-
-app.route('/listings')
-.get(wrapAsync(async(req,res)=>{
-    let allListings= await Listing.find()
-    res.render('listings/index',{allListings})
-}))
-
-app.route('/listings/new')
-.get((req,res)=>{
-    res.render('listings/new')
-})
-
-.post(validateListing,wrapAsync(async(req,res)=>{    
-    const newListing=new Listing(req.body.listing)
-    await newListing.save()
-    res.redirect('/listings')
-
-}))
 
 
-app.route('/listings/:id/edit')
-.get(wrapAsync(async(req,res)=>{
-    let{id}=req.params
-    const listing=await Listing.findById(id)
-    res.render('listings/edit',{listing})
-}))
-.put(validateListing,wrapAsync(async(req,res)=>{
-    let{id}=req.params
-    await Listing.findByIdAndUpdate(id,{...req.body.listing})
-    res.redirect(`/listings/${id}`)
-}))
+app.use('/listings',listings)
 
-app.route('/listings/:id')
-.get(wrapAsync(async(req,res)=>{
-    let {id}=req.params
-    let listing = await Listing.findById(id).populate('reviews')
-    res.render('listings/show',{listing})
-}))
 
-app.route('/listings/:id/reviews')
-.post(validateReview,wrapAsync(async(req,res)=>{
-    let {id}=req.params
-    const newReview=new Review(req.body.review)
-    const listing=await Listing.findById(id)
-    await listing.reviews.push(newReview)
-    await newReview.save()
-    await listing.save()
-    res.redirect(`/listings/${id}`) 
 
-}))
-
-app.delete('/listings/:id',wrapAsync(async(req,res)=>{
-    let{id}=req.params
-    await Listing.findByIdAndDelete(id)
-}))
 
 
 app.use((req,res,next)=>{
