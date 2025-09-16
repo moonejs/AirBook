@@ -36,3 +36,35 @@
 
 
 
+/* Slide in from top */
+@keyframes slideDownFadeIn {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Fade out animation */
+@keyframes fadeOutUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+.alert.animate {
+  animation: slideDownFadeIn 0.6s ease-out;
+}
+
+/* Add this class dynamically when dismissing */
+.alert.fade-out {
+  animation: fadeOutUp 0.5s ease-in forwards;
+}

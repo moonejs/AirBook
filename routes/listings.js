@@ -51,6 +51,7 @@ router.route('/new')
 .post(validateListing,wrapAsync(async(req,res)=>{    
     const newListing=new Listing(req.body.listing)
     await newListing.save()
+    req.flash('flash',{type:'success',message:'New Listing Added successfully!'})
     res.redirect('/listings')
 
 }))
