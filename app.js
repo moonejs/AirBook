@@ -5,9 +5,14 @@ const expressLayouts = require('express-ejs-layouts');
 const methodOverride=require('method-override')
 const session=require('express-session')
 const flash=require('connect-flash')
+const passport=require('passport')
+const localStrategy=require('passport-local')
+const User=require('./models/user')
 
 
-const listings=require('./routes/listings')
+
+const listingsRouter=require('./routes/listings')
+const userRouter=require('./routes/user')
 
 
 const port=8080
@@ -43,7 +48,12 @@ app.use(express.json());
 app.use(methodOverride("_method"))
 app.use(session(sessionOptions))
 app.use(flash())
+app.use(passport.initialize())
+app.use(passport.session())
 
+passport.use(new localStrategy(User.authenticate()))
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 
 app.set("view engine","ejs")
@@ -65,9 +75,9 @@ app.use((req,res,next)=>{
   res.locals.flash=flashData||null
   next()
 })
-app.use('/listings',listings)
+app.use('/listings',listingsRouter)
 
-
+app.use('/',userRouter)
 
 app.use((req,res,next)=>{
     next(new ExpressError(404,'Page not found'))

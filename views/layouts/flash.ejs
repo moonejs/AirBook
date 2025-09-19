@@ -1,0 +1,8 @@
+<% if (flash) { %>
+        <div class=" alert alert-<%= flash.type %> alert-dismissible fade show mt-2" role="alert">
+            <span class="fas fa-bullhorn me-1"></span>
+            
+            <%= flash.message %>
+            
+        </div>
+    <% } %>

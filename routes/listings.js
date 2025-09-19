@@ -61,6 +61,10 @@ router.route('/:id/edit')
 .get(wrapAsync(async(req,res)=>{
     let{id}=req.params
     const listing=await Listing.findById(id)
+    if(!listing){
+        req.flash('flash',{type:'warning',message:'Listing Not exist'})
+        return res.redirect('/listings');
+    }
     res.render('listings/edit',{listing})
 }))
 .put(validateListing,wrapAsync(async(req,res)=>{
@@ -73,6 +77,10 @@ router.route('/:id')
 .get(wrapAsync(async(req,res)=>{
     let {id}=req.params
     let listing = await Listing.findById(id).populate('reviews')
+    if(!listing){
+        req.flash('flash',{type:'warning',message:'Listing Not exist!'})
+        res.redirect('/listings')
+    }
     res.render('listings/show',{listing})
 }))
 
@@ -84,8 +92,8 @@ router.route('/:id/reviews')
     await listing.reviews.push(newReview)
     await newReview.save()
     await listing.save()
+    req.flash('flash',{type:'success',message:'New Review Added successfully!'})
     res.redirect(`/listings/${id}`) 
-
 }))
 
 router.route('/:id/reviews/:reviewId')
@@ -99,7 +107,8 @@ router.route('/:id/reviews/:reviewId')
 router.delete('/:id',wrapAsync(async(req,res)=>{
     let{id}=req.params
     await Listing.findByIdAndDelete(id)
-    res.redirect('/')
+    req.flash('flash',{type:'danger',message:'Listing Deleted successfully!'})
+    res.redirect('/listings')
 }))
 
 
