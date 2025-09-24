@@ -39,13 +39,21 @@
                                         <% } %>
 
                                         <span class="ms-2 fw-medium"><%- rev.rating %>/5</span>
+                                        <% if( currUser && currUser._id.equals(listing.owner._id)) { %>
+                                        <form method="POST" action="/listings/<%- listing.id %>/reviews/<%- rev.id %>?_method=DELETE" style="display: inline;">
+                                            <button type="submit" class="btn animate-up-2">
+                                                <i class="fa-solid fa-trash" style="color: #e51d53;"></i>
+                                            </button>
+                                        </form>
+                                        <%} %>
                                     </div>
-                                     <h6 class="mb-0 fw-bold">Unknown</h6>
+                                     <h6 class="mb-0 fw-bold"><%-  %></h6>
                                     
                                 </div>
                                 <!-- <small class="text-muted"><%- rev.createdAt %></small> -->
                             </div>
                             <p class="text-muted mb-0"><%- rev.comment %></p>
+                            
                         </div>
                     <% }) %>
                 </div>
@@ -96,25 +104,26 @@
             </div>
         </div>
     </div>
-
-    <div class="row mt-2">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex gap-2">
-                    <a href="/listings/<%- listing._id %>/edit" class="btn btn-outline-primary">
-                        <i class="fas fa-edit me-2"></i>
-                        Edit
-                    </a>
-                    <form method="POST" action="/listings/<%- listing._id %>?_method=DELETE" style="display: inline;">
-                        <button type="submit" class="btn btn-outline-danger">
-                            <i class="fas fa-trash me-2"></i>
-                            Delete
-                        </button>
-                    </form>
+    <% if( currUser && currUser._id.equals(listing.owner._id)) { %>
+        <div class="row mt-2">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex gap-2">
+                        <a href="/listings/<%- listing._id %>/edit" class="btn btn-outline-primary">
+                            <i class="fas fa-edit me-2"></i>
+                            Edit
+                        </a>
+                        <form method="POST" action="/listings/<%- listing._id %>?_method=DELETE" style="display: inline;">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fas fa-trash me-2"></i>
+                                Delete
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    <% } %>
 </div>
 
 <style>

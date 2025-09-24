@@ -8,7 +8,7 @@ const flash=require('connect-flash')
 const passport=require('passport')
 const localStrategy=require('passport-local')
 const User=require('./models/user')
-
+const ExpressError=require('./utils/ExpressError')
 
 
 const listingsRouter=require('./routes/listings')
@@ -71,16 +71,17 @@ app.get('/',(req,res)=>{
 
 app.use((req,res,next)=>{
   const flashData=req.flash('flash')[0]
-  console.log(flashData);
   res.locals.flash=flashData||null
+  res.locals.currUser=req.user
   next()
+
 })
 app.use('/listings',listingsRouter)
 
 app.use('/',userRouter)
 
 app.use((req,res,next)=>{
-    next(new ExpressError(404,'Page not found'))
+  next(new ExpressError(404,'Page not found'))
 })
 
 app.use((err, req, res, next) => {

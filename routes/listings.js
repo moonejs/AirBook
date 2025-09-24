@@ -10,7 +10,7 @@ const wrapAsync=require('../utils/wrapAsync')
 const ExpressError=require('../utils/ExpressError')
 const {listingSchema}=require('../schema')
 const {reviewSchema}=require('../schema')
-
+const {isLoggedIn, isOwner}=require('../middelware')
 
 
 
@@ -40,16 +40,18 @@ const validateReview=(req,res,next)=>{
 
 router.route('/')
 .get(wrapAsync(async(req,res)=>{
+    let user=req.user
     let allListings= await Listing.find()
-    res.render('listings/index',{allListings})
+    res.render('listings/index',{allListings,user});
 }))
 
 router.route('/new')
-.get((req,res)=>{
+.get(isLoggedIn,(req,res)=>{
     res.render('listings/new')
 })
 .post(validateListing,wrapAsync(async(req,res)=>{    
     const newListing=new Listing(req.body.listing)
+    newListing.owner=req.user._id
     await newListing.save()
     req.flash('flash',{type:'success',message:'New Listing Added successfully!'})
     res.redirect('/listings')
@@ -58,16 +60,16 @@ router.route('/new')
 
 
 router.route('/:id/edit')
-.get(wrapAsync(async(req,res)=>{
+.get(isLoggedIn,isOwner,wrapAsync(async(req,res)=>{
     let{id}=req.params
-    const listing=await Listing.findById(id)
+    let listing= await Listing.findById(id)    
     if(!listing){
         req.flash('flash',{type:'warning',message:'Listing Not exist'})
         return res.redirect('/listings');
     }
     res.render('listings/edit',{listing})
 }))
-.put(validateListing,wrapAsync(async(req,res)=>{
+.put(isLoggedIn,validateListing,isOwner,wrapAsync(async(req,res)=>{
     let{id}=req.params
     await Listing.findByIdAndUpdate(id,{...req.body.listing})
     res.redirect(`/listings/${id}`)
@@ -76,7 +78,7 @@ router.route('/:id/edit')
 router.route('/:id')
 .get(wrapAsync(async(req,res)=>{
     let {id}=req.params
-    let listing = await Listing.findById(id).populate('reviews')
+    let listing = await Listing.findById(id).populate('reviews').populate('owner')
     if(!listing){
         req.flash('flash',{type:'warning',message:'Listing Not exist!'})
         res.redirect('/listings')
@@ -85,10 +87,13 @@ router.route('/:id')
 }))
 
 router.route('/:id/reviews')
-.post(validateReview,wrapAsync(async(req,res)=>{
+.post(isLoggedIn,validateReview,wrapAsync(async(req,res)=>{
     let {id}=req.params
     const newReview=new Review(req.body.review)
     const listing=await Listing.findById(id)
+    newReview.author=req.user_id
+    console.log(newReview);
+    
     await listing.reviews.push(newReview)
     await newReview.save()
     await listing.save()
@@ -97,15 +102,19 @@ router.route('/:id/reviews')
 }))
 
 router.route('/:id/reviews/:reviewId')
-.delete(wrapAsync(async(req,res)=>{
+.delete(isLoggedIn,isOwner,wrapAsync(async(req,res)=>{
     let{id,reviewId}=req.params
     await Listing.findByIdAndUpdate(id,{$pull:{review:reviewId}})
+    console.log(id,reviewId);
+    
     await Review.findByIdAndDelete(reviewId)
     res.redirect(`/listings/${id}`)
 }))
 
-router.delete('/:id',wrapAsync(async(req,res)=>{
+router.delete('/:id',isLoggedIn,isOwner,wrapAsync(async(req,res)=>{
     let{id}=req.params
+    console.log('hello');
+    
     await Listing.findByIdAndDelete(id)
     req.flash('flash',{type:'danger',message:'Listing Deleted successfully!'})
     res.redirect('/listings')
