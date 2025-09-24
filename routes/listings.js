@@ -78,7 +78,7 @@ router.route('/:id/edit')
 router.route('/:id')
 .get(wrapAsync(async(req,res)=>{
     let {id}=req.params
-    let listing = await Listing.findById(id).populate('reviews').populate('owner')
+    let listing = await Listing.findById(id).populate({path:'reviews',populate:{path:'author'}}).populate('owner')
     if(!listing){
         req.flash('flash',{type:'warning',message:'Listing Not exist!'})
         res.redirect('/listings')
@@ -91,7 +91,7 @@ router.route('/:id/reviews')
     let {id}=req.params
     const newReview=new Review(req.body.review)
     const listing=await Listing.findById(id)
-    newReview.author=req.user_id
+    newReview.author=req.user
     console.log(newReview);
     
     await listing.reviews.push(newReview)
