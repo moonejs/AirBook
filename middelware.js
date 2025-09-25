@@ -1,5 +1,10 @@
 const Listing=require('./models/listing')
 
+const {listingSchema}=require('./schema')
+const {reviewSchema}=require('./schema')
+const ExpressError=require('./utils/ExpressError')
+
+
 module.exports.isLoggedIn=(req,res,next)=>{
     if(!req.isAuthenticated()){
         req.session.redirectUrl=req.originalUrl  
@@ -26,4 +31,24 @@ module.exports.isOwner=async(req,res,next)=>{
         
     }
     next()
+}
+module.exports.validateListing=(req,res,next)=>{
+    let {error}=listingSchema.validate(req.body,{ abortEarly: false })
+    if (error){
+        let errMsg=error.details.map((e)=>e.message).join(',')
+        throw new ExpressError(400,errMsg)
+    }
+    else{
+        next()
+    }
+}
+
+module.exports.validateReview=(req,res,next)=>{
+    let{error}=reviewSchema.validate(req.body,{abortEarly:false})
+    if(error){
+        let errMsg=error.details.map((e)=>e.message).join(',')
+        throw new ExpressError(400,errMsg)
+    }else{
+        next()
+    }
 }
