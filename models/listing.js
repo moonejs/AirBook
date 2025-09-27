@@ -12,9 +12,8 @@ const listingSchema=new Schema({
         required:[true,'A listing must have a description.']
     },
     image:{
-        type:String,
-        set: (v) => v==="" ? "https://placehold.co/600x400/EEE/31343C?text=Property+Image" : v,
-        default: 'https://placehold.co/600x400/EEE/31343C?text=Property+Image'
+        url:String,
+        filename:String,
     },
     price:{
         type:Number,

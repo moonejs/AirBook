@@ -10,7 +10,7 @@
             <div class="py-4">
                 <h3 class="mb-4 display-4">Add New Listing</h3>
                 
-                <form action="/listings/new" method="POST" novalidate class="needs-validation">
+                <form action="/listings/new" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
                     <div class="mb-4">
                         <label for="title" class="form-label text-muted small"> Title</label>
                         <input type="text" class="form-control" id="title" name="listing[title]" 
@@ -35,9 +35,9 @@
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label for="image" class="form-label text-muted small">Image URL</label>
-                        <input type="url" class="form-control border-1" id="image" name="listing[image]" 
-                               placeholder="https://example.com/image.jpg">
+                        <label for="formFile" class="form-label">Upload Image</label>
+                        <input class="form-control" type="file" id="formFile" name="listing[image]" >
+                        
                     </div>
 
 

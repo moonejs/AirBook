@@ -1,6 +1,8 @@
 const express=require('express')
 const router=express.Router();
- 
+const multer=require('multer')
+const {storage}=require('../cloudConfig')
+const upload=multer({storage})
 
 
 const wrapAsync=require('../utils/wrapAsync')
@@ -14,7 +16,7 @@ router.route('/')
 
 router.route('/new')
 .get(isLoggedIn,listingController.newListingForm)
-.post(validateListing,wrapAsync(listingController.newListingCreate))
+.post(validateListing,upload.single('listing[image]'),wrapAsync(listingController.newListingCreate))
 
 
 router.route('/:id/edit')

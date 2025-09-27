@@ -1,3 +1,8 @@
+if (process.env.NODE_ENV != 'production'){
+  require('dotenv').config()
+
+}
+
 const express=require('express')
 const mongoose = require('mongoose');
 const path=require('path')
@@ -11,8 +16,12 @@ const User=require('./models/user')
 const ExpressError=require('./utils/ExpressError')
 
 
+
+
+
 const listingsRouter=require('./routes/listings')
-const userRouter=require('./routes/user')
+const userRouter=require('./routes/user');
+const { log } = require('console');
 
 
 const port=8080
