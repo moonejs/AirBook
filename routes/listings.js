@@ -21,7 +21,7 @@ router.route('/new')
 
 router.route('/:id/edit')
 .get(isLoggedIn,isOwner,wrapAsync(listingController.editListingForm))
-.put(isLoggedIn,validateListing,isOwner,wrapAsync(listingController.updateListing))
+.put(isLoggedIn,validateListing,isOwner,upload.single('listing[image]'),wrapAsync(listingController.updateListing))
 
 router.route('/:id')
 .get(wrapAsync(listingController.showListing))

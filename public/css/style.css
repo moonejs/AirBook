@@ -68,3 +68,10 @@
 .alert.fade-out {
   animation: fadeOutUp 0.5s ease-in forwards;
 }
+
+#map {
+    height: 500px;
+    border-radius: 6px 6px 0 0;
+}
+
+

@@ -22,46 +22,63 @@
                 </div>
             </div>
 
-            <hr>
-            <div class="card border-0 mt-3">
-                <div class="card-body">
-                    <h4 class="fw-bold mb-4">Reviews</h4>
-                    <% listing.reviews.forEach((rev)=>{ %>
-                        <div class="mb-4 pb-3 border-bottom">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div>
-                                    <div class="d-flex align-items-center mb-1">
-                                        <% for(let r=1; r<=rev.rating; r++) { %>
-                                        <i class="fas fa-star text-warning"></i>
-                                        <% } %>
-                                        <% for(let r=1; r<=5-rev.rating; r++) { %>
-                                        <i class="fas fa-star text-muted"></i>
-                                        <% } %>
+            <hr class="my-5">
 
-                                        <span class="ms-2 fw-medium"><%- rev.rating %>/5</span>
-                                        <% if( currUser && currUser._id.equals(listing.owner._id)) { %>
+            <div class="card border-0">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h4 class="fw-bold mb-0">Reviews</h4>
+                    </div>
+                    
+                    <% if(listing.reviews.length > 0) { %>
+                        <% listing.reviews.forEach((rev) => { %>
+                            <div class="review-card mb-4 p-3 rounded bg-light ">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="flex-grow-1">
+                                        
+                                        <div class="d-flex align-items-center mb-2">
+                                            <% for(let r=1; r<=rev.rating; r++) { %>
+                                                <i class="fas fa-star text-warning me-1"></i>
+                                            <% } %>
+                                            <% for(let r=1; r<=5-rev.rating; r++) { %>
+                                                <i class="fas fa-star text-muted me-1"></i>
+                                            <% } %>
+                                            <span class="ms-2 fw-semibold text-primary"><%- rev.rating %>/5</span>
+                                        </div>
+                                        
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle me-2">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <h6 class="mb-0 fw-bold text-dark"><%- rev.author.username %></h6>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Delete button for owner -->
+                                    <% if(currUser && currUser._id.equals(listing.owner._id)) { %>
                                         <form method="POST" action="/listings/<%- listing.id %>/reviews/<%- rev.id %>?_method=DELETE" style="display: inline;">
                                             <button type="submit" class="btn animate-up-2">
-                                                <i class="fa-solid fa-trash" style="color: #e51d53;"></i>
+                                                 <i class="fa-solid fa-trash" style="color: #e51d53;"></i>
                                             </button>
                                         </form>
-                                        <%} %>
-                                    </div>
-                                     <h6 class="mb-0 fw-bold"><%-rev.author.username %></h6>
-                                    
+                                    <% } %>
                                 </div>
-                                <!-- <small class="text-muted"><%- rev.createdAt %></small> -->
+                                
+                                <p class="text-muted mb-0 mt-3 lh-base"><%- rev.comment %></p>
                             </div>
-                            <p class="text-muted mb-0"><%- rev.comment %></p>
-                            
+                        <% }) %>
+                    <% } else { %>
+                        <div class="text-center py-5">
+                            <i class="fas fa-star-o fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No reviews yet</h5>
+                            <p class="text-muted">Be the first to leave a review!</p>
                         </div>
-                    <% }) %>
+                    <% } %>
                 </div>
             </div>
         </div>
-
         <div class="col-lg-4">
-            <div class="card border-0 h-100">
+            <div class="card border-0  shadow-sm">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center text-muted mb-3">
                         <i class="fas fa-map-marker-alt me-2 text-primary"></i>
@@ -78,7 +95,7 @@
                     <hr class="my-4">
                     <h5 class="fw-bold mb-3">Write a review</h5>
                     
-                    <form action="/listings/<%- listing.id %>/reviews" class="needs-validation " novalidate method="POST">
+                    <form action="/listings/<%- listing.id %>/reviews" class="needs-validation" novalidate method="POST">
                         <div class="mb-3">
                             <label for="range" class="form-label">Rating</label>
                             <fieldset class="starability-slot">
@@ -100,9 +117,9 @@
                             <label for="comment" class="form-label">Comment</label>
                             <textarea class="form-control" id="comment" name="review[comment]" rows="4" 
                                       placeholder="Tell others about your stay..." required></textarea>
-                                       <div class="invalid-feedback">
-      Enter valid comment
-    </div>
+                            <div class="invalid-feedback">
+                                Enter valid comment
+                            </div>
                         </div>
                     
                         <div class="d-grid">
@@ -113,13 +130,12 @@
                         </div>
                     </form>
                 </div>
+                
             </div>
-        </div>
-    </div>
-    <% if( currUser && currUser._id.equals(listing.owner._id)) { %>
-        <div class="row mt-2">
+            <% if(currUser && currUser._id.equals(listing.owner._id)) { %>
+        <div class="row mt-4">
             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-end align-items-center">
                     <div class="d-flex gap-2">
                         <a href="/listings/<%- listing._id %>/edit" class="btn btn-outline-primary">
                             <i class="fas fa-edit me-2"></i>
@@ -136,7 +152,33 @@
             </div>
         </div>
     <% } %>
+        </div>
+    </div>
+    <hr>
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="text-center fw-bold mb-4">Where you'll be</h3>
+        
+        <div class="border rounded shadow-sm animate-up-2 shadow-lg-hover">
+            <div id="map" class="bg-light d-flex align-items-center justify-content-center"></div>
+            <div class="bg-white p-3 border-top text-center">
+                <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                <span class="fw-medium"><%- listing.location %>, <%- listing.country %></span>
+            </div>
+        </div>
+    </div>
 </div>
 
-<style>
-</style>
+
+
+</div>
+    <script>
+        let MapToken = '<%= process.env.MAP_TOKEN %>'
+        mapboxgl.accessToken = MapToken;
+        const map = new mapboxgl.Map({
+            container: 'map', // container ID
+            center: [76.8783, 29.9695], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+            zoom: 9 // starting zoom
+        });
+    </script>
+
