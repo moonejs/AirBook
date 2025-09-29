@@ -173,12 +173,18 @@
 
 </div>
     <script>
+        let coordinates = <%- JSON.stringify(listing.geometry.coordinates) %>;
+
         let MapToken = '<%= process.env.MAP_TOKEN %>'
         mapboxgl.accessToken = MapToken;
         const map = new mapboxgl.Map({
             container: 'map', // container ID
-            center: [76.8783, 29.9695], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+            center: coordinates, // starting position [lng, lat]. Note that lat must be set between -90 and 90
             zoom: 9 // starting zoom
         });
+
+        const marker =new mapboxgl.Marker({color:'#E51D53'})
+        .setLngLat(coordinates)
+        .addTo(map)
     </script>
 
