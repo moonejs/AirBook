@@ -90,7 +90,7 @@ app.set('layout', 'layouts/base');
 
 
 app.get('/',(req,res)=>{
-    res.send('hello')
+    res.render('listings/index')
 })
 
 
