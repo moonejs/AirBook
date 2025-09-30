@@ -9,6 +9,7 @@ const path=require('path')
 const expressLayouts = require('express-ejs-layouts');
 const methodOverride=require('method-override')
 const session=require('express-session')
+const MongoStore = require('connect-mongo');
 const flash=require('connect-flash')
 const passport=require('passport')
 const localStrategy=require('passport-local')
@@ -26,9 +27,24 @@ const { log } = require('console');
 
 const port=8080
 const app=express()
-const MONGO_URL = 'mongodb://127.0.0.1:27017/airbook'
+// const MONGO_URL = 'mongodb://127.0.0.1:27017/airbook'
+const dbUrl = process.env.ATLASDB_URL;
+
+const store =MongoStore.create({
+  mongoUrl:dbUrl,
+  crypt:{
+    secret:process.env.SECRET
+  },
+  touchAfter:24*3600
+})
+store.on("error",()=>{
+  console.log("mongo Atlas error",err);
+  
+})
+
 const sessionOptions={
-  secret:"mysecretbro",
+  store,
+  secret:process.env.SECRET,
   resave:false,
   saveUninitialized:true,
   cookie:{
@@ -46,7 +62,7 @@ main()
 .catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(dbUrl);
 }
 
 
