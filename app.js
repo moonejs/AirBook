@@ -90,7 +90,7 @@ app.set('layout', 'layouts/base');
 
 
 app.get('/',(req,res)=>{
-    res.render('listings/index')
+    res.redirect('/listings')
 })
 
 
